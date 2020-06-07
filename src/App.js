@@ -6,12 +6,9 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm'
 import Rank from './components/Rank/Rank'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 import Particles from 'react-particles-js'
-import Clarifai from 'clarifai'
 import Signin from './components/Signin/Signin'
 import Register from './components/Register/Register'
-const app = new Clarifai.App({
- apiKey: '0bc52d5a64ab421c97190dbe0639564a'
-});
+
 
 const particleOptions = {
 particles: {
@@ -80,13 +77,17 @@ class App extends Component {
   onButtonSubmit = () => {
     console.log(this.state.user.id)
     this.setState({ imageUrl: this.state.input});
-    app.models
-    .predict(
-        Clarifai.FACE_DETECT_MODEL,
-        this.state.input)
+    fetch('https://kentlogic-smart-brain-api.herokuapp.com/imageUrl', {
+              method: 'post',
+              headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({
+                input: this.state.input
+          })
+        })
+    .then(response => response.json())
     .then(response => {
       if (response) {
-          fetch('http://localhost:3000/image', {
+          fetch('https://kentlogic-smart-brain-api.herokuapp.com/image', {
               method: 'put',
               headers: {'Content-Type':'application/json'},
               body: JSON.stringify({
